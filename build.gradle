@@ -13,8 +13,8 @@ ext {
 }
 
 dependencies {
-  implementation "org.apache.iceberg:iceberg-api:${icebergVersion}"
-  implementation "org.apache.iceberg:iceberg-core:${icebergVersion}"
+  implementation (files("iceberg-api-1.6.0-SNAPSHOT.jar"))
+  implementation (files("iceberg-core-1.6.0-SNAPSHOT.jar"))
   implementation "org.apache.iceberg:iceberg-core:${icebergVersion}:tests"
   implementation "org.apache.iceberg:iceberg-aws:${icebergVersion}"
   implementation "org.apache.iceberg:iceberg-azure:${icebergVersion}"
