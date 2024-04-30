@@ -8,13 +8,13 @@ repositories {
 }
 
 ext {
-  icebergVersion = '1.4.3'
+  icebergVersion = '1.5.1'
   hadoopVersion = '3.3.6'
 }
 
 dependencies {
-  implementation (files("iceberg-api-1.6.0-SNAPSHOT.jar"))
-  implementation (files("iceberg-core-1.6.0-SNAPSHOT.jar"))
+  implementation "org.apache.iceberg:iceberg-api:${icebergVersion}"
+  implementation "org.apache.iceberg:iceberg-core:${icebergVersion}"
   implementation "org.apache.iceberg:iceberg-core:${icebergVersion}:tests"
   implementation "org.apache.iceberg:iceberg-aws:${icebergVersion}"
   implementation "org.apache.iceberg:iceberg-azure:${icebergVersion}"
@@ -33,9 +33,9 @@ dependencies {
 
   implementation 'com.google.guava:guava:33.0.0-jre'
 
-  implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
-  implementation 'org.postgresql:postgresql:42.7.1'
+  implementation 'org.postgresql:postgresql:42.7.2'
   implementation 'mysql:mysql-connector-java:8.0.33'
+  implementation 'org.xerial:sqlite-jdbc:3.45.3.0'
 }
 
 jar {
