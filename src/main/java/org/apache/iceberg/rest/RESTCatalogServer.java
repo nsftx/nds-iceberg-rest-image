@@ -1,21 +1,19 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Copyright 2024 Tabular Technologies Inc.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.apache.iceberg.rest;
 
 import java.io.File;
@@ -47,27 +45,28 @@ public class RESTCatalogServer {
   private static CatalogContext backendCatalog() throws IOException {
     // Translate environment variable to catalog properties
     Map<String, String> catalogProperties =
-        System.getenv().entrySet().stream()
-            .filter(e -> e.getKey().startsWith(CATALOG_ENV_PREFIX))
-            .collect(
-                Collectors.toMap(
-                    e ->
-                        e.getKey()
-                            .replaceFirst(CATALOG_ENV_PREFIX, "")
-                            .replaceAll("__", "-")
-                            .replaceAll("_", ".")
-                            .toLowerCase(Locale.ROOT),
-                    Map.Entry::getValue,
-                    (m1, m2) -> {
-                      throw new IllegalArgumentException("Duplicate key: " + m1);
-                    },
-                    HashMap::new));
+            System.getenv().entrySet().stream()
+                    .filter(e -> e.getKey().startsWith(CATALOG_ENV_PREFIX))
+                    .collect(
+                            Collectors.toMap(
+                                    e ->
+                                            e.getKey()
+                                                    .replaceFirst(CATALOG_ENV_PREFIX, "")
+                                                    .replaceAll("__", "-")
+                                                    .replaceAll("_", ".")
+                                                    .toLowerCase(Locale.ROOT),
+                                    Map.Entry::getValue,
+                                    (m1, m2) -> {
+                                      throw new IllegalArgumentException("Duplicate key: " + m1);
+                                    },
+                                    HashMap::new));
 
     // Fallback to a JDBCCatalog impl if one is not set
     catalogProperties.putIfAbsent(
-        CatalogProperties.CATALOG_IMPL, "org.apache.iceberg.jdbc.JdbcCatalog");
+            CatalogProperties.CATALOG_IMPL, "org.apache.iceberg.jdbc.JdbcCatalog");
     catalogProperties.putIfAbsent(
-        CatalogProperties.URI, "jdbc:sqlite:file:/tmp/iceberg_rest_mode=memory");
+            CatalogProperties.URI, "jdbc:sqlite:file:/tmp/iceberg_rest_mode=memory");
+    catalogProperties.putIfAbsent("jdbc.schema-version", "V1");
 
     // Configure a default location if one is not specified
     String warehouseLocation = catalogProperties.get(CatalogProperties.WAREHOUSE_LOCATION);
@@ -81,7 +80,7 @@ public class RESTCatalogServer {
       LOG.info("No warehouse location set.  Defaulting to temp location: {}", warehouseLocation);
     }
 
-    LOG.info("Creating catalog with properties: {}", catalogProperties);
+    //LOG.info("Creating catalog with properties: {}", catalogProperties);
     return new CatalogContext(CatalogUtil.buildIcebergCatalog("rest_backend", catalogProperties, new Configuration()), catalogProperties);
   }
 
@@ -100,7 +99,7 @@ public class RESTCatalogServer {
       context.setGzipHandler(new GzipHandler());
 
       Server httpServer =
-          new Server(PropertyUtil.propertyAsInt(System.getenv(), "REST_PORT", 8181));
+              new Server(PropertyUtil.propertyAsInt(System.getenv(), "REST_PORT", 8181));
       httpServer.setHandler(context);
 
       httpServer.start();
