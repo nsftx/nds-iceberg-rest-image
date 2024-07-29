@@ -18,6 +18,7 @@ package org.apache.iceberg.rest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.CatalogUtil;
 import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.rest.filter.RequestFilter;
 import org.apache.iceberg.util.PropertyUtil;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -33,6 +35,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.DispatcherType;
 
 public class RESTCatalogServer {
   private static final Logger LOG = LoggerFactory.getLogger(RESTCatalogServer.class);
@@ -94,6 +98,7 @@ public class RESTCatalogServer {
       context.setContextPath("/");
       ServletHolder servletHolder = new ServletHolder(servlet);
       servletHolder.setInitParameter("javax.ws.rs.Application", "ServiceListPublic");
+      context.addFilter(RequestFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
       context.addServlet(servletHolder, "/*");
       context.setVirtualHosts(null);
       context.setGzipHandler(new GzipHandler());
