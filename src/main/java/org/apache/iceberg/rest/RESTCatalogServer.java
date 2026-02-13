@@ -23,20 +23,21 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.CatalogUtil;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.rest.filter.RequestFilter;
 import org.apache.iceberg.util.PropertyUtil;
+import org.eclipse.jetty.compression.server.CompressionHandler;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 
 public class RESTCatalogServer {
   private static final Logger LOG = LoggerFactory.getLogger(RESTCatalogServer.class);
@@ -101,7 +102,7 @@ public class RESTCatalogServer {
       context.addFilter(RequestFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
       context.addServlet(servletHolder, "/*");
       context.setVirtualHosts(null);
-      context.setGzipHandler(new GzipHandler());
+      context.setHandler(new CompressionHandler());
 
       Server httpServer =
               new Server(PropertyUtil.propertyAsInt(System.getenv(), "REST_PORT", 8181));
